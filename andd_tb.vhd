@@ -13,29 +13,30 @@ architecture behv of andd_tb is
 	end component;
 
 	--test signals
-	signal z, x, y : std_logic_vector(31 downto 0);
+	signal z, x, y : std_logic_vector(0 downto 0);
 
 begin
 
 andd_dut : andd
+      generic map (n => 1)
       port map (x => x,
 		y => y,
 		z => z);
     process
       type pattern_type is record
          --  The inputs of the device.
-	 x : std_logic_vector(31 downto 0);
-	 y : std_logic_vector(31 downto 0);
+	 x : std_logic_vector(0 downto 0);
+	 y : std_logic_vector(0 downto 0);
          --  The expected outputs of the device.
-	 z : std_logic_vector(31 downto 0);
+	 z : std_logic_vector(0 downto 0);
       end record;
       --  The patterns to apply.
       type pattern_array is array (natural range <>) of pattern_type;
       constant patterns : pattern_array :=
-        ((X"00000001", X"00000001", X"00000001"),
-	 (X"00000004", X"0000000F", X"00000004"),
-	 (X"FFFFFFFF", X"12345678", X"12345678"),
-         (X"00000000", X"12345678", X"00000000"));
+        (("0", "0", "0"),
+	 ("1", "0", "0"),
+	 ("0", "1", "0"),
+         ("1", "1", "1"));
    begin
       --  Check each pattern.
       for i in patterns'range loop
