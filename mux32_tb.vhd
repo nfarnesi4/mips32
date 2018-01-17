@@ -1,10 +1,10 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity mux_tb is
-end mux_tb;
+entity mux32_tb is
+end mux32_tb;
 
-architecture behv of mux_tb is
+architecture behv of mux32_tb is
 	component mux
 		generic(n : natural := 32);
 		port( x,y: in std_logic_vector(n-1 downto 0);
