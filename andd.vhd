@@ -18,7 +18,7 @@ end entity;
 -- Declare architecture
 architecture dataflow of andd is
 begin
-    gen_and: for i in n-1 downto 0 generate
-        z(i) <= x(i) and y(i);
-    end generate;
+
+    z <= x and y;
+
 end architecture;
