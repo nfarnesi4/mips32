@@ -10,17 +10,14 @@ use ieee.std_logic_1164.all;
 
 -- Declare entity
 entity norr is
-    generic ( n: natural := 32 );
-    port (x : in std_logic_vector(n-1 downto 0);
+    port (x : in std_logic_vector;
           z: out std_logic);
 end entity;
 
 -- Declare architecture
 architecture dataflow of norr is
-    signal s : std_logic_vector(n downto 0);
 begin
-    gen_norr : for i in 0 to n-1 generate
-    	s(i+1) <= x(i) nor s(i);
-    end generate;
-    z <= s(n);
+
+    z <= '1' when x = (x'range => '0') else '0';
+
 end architecture;
