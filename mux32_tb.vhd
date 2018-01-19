@@ -5,11 +5,10 @@ entity mux32_tb is
 end mux32_tb;
 
 architecture behv of mux32_tb is
-	component mux
-		generic(n : natural := 32);
-		port( x,y: in std_logic_vector(n-1 downto 0);
-              sel: in std_logic;
-		      z  : out std_logic_vector(n-1 downto 0));
+	component mux32
+    	    port(x,y: in std_logic_vector(31 downto 0);
+         	 sel: in std_logic;
+	 	 z  : out std_logic_vector(31 downto 0));
 	end component;
 
 	--test signals
@@ -17,7 +16,7 @@ architecture behv of mux32_tb is
 	signal x, y, z : std_logic_vector(31 downto 0);
 begin
 
-mux_dut : mux port map (x => x, y => y, sel => sel, z => z);
+mux32_dut : mux32 port map (x => x, y => y, sel => sel, z => z);
 
 process
      type pattern_type is record
