@@ -9,14 +9,14 @@ end sign_extend_tb;
 
 architecture behv of sign_extend_tb is
     component sign_extend
-    	generic (in_width : natural := 15;
+    	generic (in_width : natural := 16;
     		 out_width : natural := 32);
     	port (x :  in std_logic_vector(in_width-1 downto 0);
     	      y : out std_logic_vector(out_width-1 downto 0));
     end component;
 
     --test signals
-    signal x : std_logic_vector(14 downto 0);
+    signal x : std_logic_vector(15 downto 0);
     signal y : std_logic_vector(31 downto 0);
 
 begin
@@ -27,18 +27,18 @@ begin
 
     process
       type pattern_type is record
-          x : signed(14 downto 0);
+          x : signed(15 downto 0);
           y : signed(31 downto 0);
       end record;
 
       type pattern_array is array (natural range <>) of pattern_type;
       constant patterns : pattern_array :=
-      ((to_signed(-5,15), to_signed(-5, 32)),
-       (to_signed(5,15), to_signed(5, 32)),
-       (to_signed(4,15), to_signed(4, 32)),
-       (to_signed(1,15), to_signed(1, 32)),
-       (to_signed(-4,15), to_signed(-4, 32)),
-       (to_signed(-3,15), to_signed(-3, 32)));
+      ((to_signed(-5,16), to_signed(-5, 32)),
+       (to_signed(5,16), to_signed(5, 32)),
+       (to_signed(4,16), to_signed(4, 32)),
+       (to_signed(1,16), to_signed(1, 32)),
+       (to_signed(-4,16), to_signed(-4, 32)),
+       (to_signed(-3,16), to_signed(-3, 32)));
 
     begin
 

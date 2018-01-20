@@ -38,7 +38,7 @@ use IEEE.NUMERIC_STD.ALL;
 --end rtl;
 
 entity sign_extend is
-generic ( in_width : natural := 15;
+generic ( in_width : natural := 16;
          out_width : natural := 32);
 port (x :  in std_logic_vector(in_width-1 downto 0);
       y : out std_logic_vector(out_width-1 downto 0));
