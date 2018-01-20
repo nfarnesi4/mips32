@@ -7,7 +7,7 @@ end andd_tb;
 architecture behv of andd_tb is
 
 	component andd
-    	    generic ( n: natural := 32 );
+            generic ( n: natural := 1 );
     	    port ( x,y: in std_logic_vector(n-1 downto 0);
            	   z: out std_logic_vector(n-1 downto 0) );
 	end component;
