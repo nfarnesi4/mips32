@@ -6,7 +6,8 @@ end norr_tb;
 
 architecture behv of norr_tb is
 	component norr
-    	    port (x : in std_logic_vector;
+    	    generic (width : natural := 32);
+    	    port (x : in std_logic_vector(width-1 downto 0);
           	  z: out std_logic);
 	end component;
 

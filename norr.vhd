@@ -10,7 +10,8 @@ use ieee.std_logic_1164.all;
 
 -- Declare entity
 entity norr is
-    port (x : in std_logic_vector;
+    generic (width : natural := 32);
+    port (x : in std_logic_vector(width-1 downto 0);
           z: out std_logic);
 end entity;
 
