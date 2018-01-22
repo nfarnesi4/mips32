@@ -94,7 +94,7 @@ begin
 		when others => NULL;
 		    result_w <= (others => '0');
 		    overflow <= '0';
-		    
+
 		end case;
 	end process;
 
