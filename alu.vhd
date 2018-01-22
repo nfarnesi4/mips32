@@ -28,32 +28,28 @@ architecture rtl of alu is
 
 	signal result_w : std_logic_vector(width-1 downto 0) := (others => '0');
 
-	signal add_res, sub_res : signed(width-1 downto 0) := (others => '0');
+	signal add_res : signed(width-1 downto 0) := (others => '0');
+	signal add_overf : std_logic := '0';
 
-	signal add_overf, sub_overf : std_logic := '0';
+	signal b_adder : std_logic_vector(width-1 downto 0) := (others => '0');
 
-	signal neg_b : signed(width-1 downto 0) := (others => '0');
 begin
 
 	result <= result_w;
-
-	neg_b <= -signed(b);
 
 	nor32 : norr generic map(width => 32)
 				 port map (x => result_w,
 				           z => zero);
 
-	add : signed_adder
+	-- set the b input to the adder based on add or substract
+    b_adder <= b when oper(2) = '0' else std_logic_vector(-signed(b));
+
+	-- adder used for the alu. Used for both add and subtract
+	adder : signed_adder
 		port map (a => signed(a),
-		          b => signed(b),
+		          b => signed(b_adder),
 		          sum => add_res,
 		          overf => add_overf);
-
-	sub : signed_adder
-		port map (a => signed(a),
-		          b => neg_b,
-		          sum => sub_res,
-		          overf => sub_overf);
 
 	process(a, b, oper)
 	begin
@@ -76,8 +72,8 @@ begin
 
 		-- subtract
 		when "0110" =>
-			result_w <= std_logic_vector(sub_res);
-			overflow <= sub_overf;
+			result_w <= std_logic_vector(add_res);
+			overflow <= add_overf;
 
 		-- set on less than
 		when "0111" =>
@@ -96,6 +92,9 @@ begin
 			overflow <= '0';
 
 		when others => NULL;
+		    result_w <= (others => '0');
+		    overflow <= '0';
+		    
 		end case;
 	end process;
 
