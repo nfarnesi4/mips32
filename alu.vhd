@@ -91,7 +91,7 @@ begin
 			result_w <= a nor b;
 			overflow <= '0';
 
-		when others => NULL;
+		when others =>
 		    result_w <= (others => '0');
 		    overflow <= '0';
 
