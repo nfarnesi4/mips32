@@ -5,7 +5,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity one_bit_alu is
 port (a, b, a_inv, b_inv, carry_in, less : in std_logic;
-      oper : in std_logic_vector(3 downto 0);
+      oper : in std_logic_vector(1 downto 0);
       carry_out, result : out std_logic);
 end one_bit_alu;
 
@@ -20,33 +20,24 @@ begin
 
 	carry_out <= (a_w and b_w) or (carry_in and a_w) or (carry_in and b_w);
 
-	process
+	process(oper, a_w, b_w, carry_in, less)
 	begin
 		case oper is
 		-- and
-		when "0000" =>
+		when "00" =>
 			result <= a_w and b_w;
 
 		-- or
-		when "0001" =>
+		when "01" =>
 			result <= a_w or b_w;
 
 		-- add
-		when "0010" =>
-			result <= a_w xor b_w xor carry_in;
-
-		-- substract
-		when "0110" =>
+		when "10" =>
 			result <= a_w xor b_w xor carry_in;
 
 		-- set on less than
-		when "0111" =>
+		when "11" =>
 			result <= less;
-
-		-- NOR
-		when "1100" =>
-			-- or the inputs because a invert and b invert will be set
-			result <= a_w or b_w;
 
 		when others =>
 			result <= '0';
