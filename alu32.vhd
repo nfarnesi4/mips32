@@ -52,7 +52,7 @@ begin
 	carry_wires(0) <= b_inv;
 
 	-- slt calculation (basically add the last bits)
-	less <= a(n-1) xor not b(n-1) xor carry_wires(n-1);
+	less <= a(n-1) xor not b(n-1) xor carry_wires(n-1) xor (carry_wires(n-1) xor carry_wires(n));
 
 	-- overflow calculation
 	overf <= carry_wires(n) xor carry_wires(n-1);
