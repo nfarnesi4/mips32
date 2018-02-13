@@ -8,8 +8,8 @@ entity imemory is
 end entity imemory;
 
 architecture rtl of imemory is
-	type mem is array (integer range <>) of std_logic_vector(7 downto 0);
-	signal imem : mem(0 to 255) := (others => (others => '0'));
+	type byte_mem is array (integer range <>) of std_logic_vector(7 downto 0);
+	signal imem : byte_mem(0 to 255) := (others => (others => '0'));
 	signal addr_3, addr_2, addr_1, addr_0 : unsigned(31 downto 0);
 begin
 
