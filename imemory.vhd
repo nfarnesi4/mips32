@@ -23,10 +23,10 @@ begin
 		variable initlized : boolean := false;
 	begin
 		if not initlized then
-			imem <= (0 => X"00",
-			         1 => X"01",
-			         2 => X"02",
-			         3 => X"03",
+			imem <= (0 => X"03",
+			         1 => X"02",
+			         2 => X"01",
+			         3 => X"00",
 			         -- instruction
 			         4 => X"FF",
 			         5 => X"FF",
@@ -39,8 +39,8 @@ begin
 	end process;
 
 
-	data <= imem(to_integer(addr_3)) & imem(to_integer(addr_2)) &
-			imem(to_integer(addr_1)) & imem(to_integer(addr_0));
+	data <= imem(to_integer(addr_0)) & imem(to_integer(addr_1)) &
+			imem(to_integer(addr_2)) & imem(to_integer(addr_3));
 
 end rtl;
 
