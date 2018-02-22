@@ -23,17 +23,25 @@ begin
 		variable initlized : boolean := false;
 	begin
 		if not initlized then
-			imem <= (0 => X"03",
-			         1 => X"02",
-			         2 => X"01",
-			         3 => X"00",
-			         -- instruction
-			         4 => X"FF",
-			         5 => X"FF",
-			         6 => X"FF",
-			         7 => X"FF",
-					others => (others => '0'));
-
+			imem <= (
+			         -- lw $s5 0($0)
+					 0 => X"8d", 1 => X"15", 2 => X"00", 3 => X"00",
+			         -- lw $s6, 4($t0)
+					 4 => X"8d", 5 => X"15", 6 => X"00", 7 => X"04",
+			         -- slt $t7, $s5, $s6
+			         8 => X"02", 9 => X"b6", 10 => X"78", 11 => X"2a",
+			         -- beq $t7, $s5, $s6
+			         12 => X"11", 13 => X"e0", 14 => X"00", 15 => X"02",
+			         -- sub $s1, $s2, $3
+			         16 => X"02", 17 => X"43", 18 => X"88", 19 => X"22",
+			         -- j exit
+			         20 => X"08", 21 => X"00", 22 => X"00", 23 => X"07",
+			         -- add $s1, $s2, $s3
+			         24 => X"02", 25 => X"53", 26 => X"88", 27 => X"20",
+			         -- exit: sw $s1, 12($t0)
+			         28 => X"ad", 29 => X"11", 30 => X"00", 31 => X"0c",
+			         -- set the rest to noop
+					 others => (others => '0'));
 			initlized := true;
 		end if;
 	end process;
