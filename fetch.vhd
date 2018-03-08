@@ -5,10 +5,10 @@ use ieee.numeric_std.all;
 entity fetch is
 	port ( clk : in std_logic;
 	-- control
-	pc_next : in std_logic_vector(31 downto 0);
+	pc_next_i : in std_logic_vector(31 downto 0);
 	-- datapath out
-	instr : out std_logic_vector(31 downto 0);
-	pc_plus4 : out std_logic_vector(31 downto 0)
+	instr_o : out std_logic_vector(31 downto 0);
+	pc_plus4_o : out std_logic_vector(31 downto 0)
 	);
 end entity fetch;
 
@@ -31,13 +31,13 @@ begin
 	--instantiate program counter and instruction memory
 
 	mips_pc : pc port map (clk => clk,
-						   addr_in => pc_next,
+						   addr_in => pc_next_i,
 						   addr_out => iaddress);
 
 	mips_imemory : imemory port map (address => iaddress,
-									 data => instr);
+									 data => instr_o);
 
 	-- calculate the next address
-	pc_plus4 <= std_logic_vector(signed(iaddress) + to_signed(4, pc_plus4'length));
+	pc_plus4_o <= std_logic_vector(signed(iaddress) + to_signed(4, pc_plus4_o'length));
 
 end struc;
