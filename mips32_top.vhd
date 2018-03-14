@@ -1,7 +1,10 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 
 entity mips32_top is
+	port (clk : in std_logic;
+		  overflow : out std_logic);
 end entity mips32_top;
 
 architecture struc of mips32_top is
@@ -77,21 +80,115 @@ architecture struc of mips32_top is
       	  	  y : out std_logic_vector(width-1 downto 0));
 	end component shift_left_2;
 
+	component shift_left_2_jump is
+		port ( imm :  in std_logic_vector(25 downto 0);
+   	   	   pc_4msb :  in std_logic_vector(3 downto 0);
+ 	 	 jump_addr : out std_logic_vector(31 downto 0));
+	end component shift_left_2_jump;
+
 	component mux32 is
     	port(x,y: in std_logic_vector(31 downto 0);
          	 sel: in std_logic;
-	 	 z  : out std_logic_vector(31 downto 0));
+	 	     z  : out std_logic_vector(31 downto 0));
 	end component mux32;
 
-	-- wires
+	component mux is
+    	generic ( n: natural := 32 );
+    	port ( x,y: in std_logic_vector(n-1 downto 0);
+           	   sel: in std_logic;
+           	   z: out std_logic_vector(n-1 downto 0) );
+	end component mux;
 
 	--control wires
---	signal Jump, branch, MemRead, MemtoReg, MemRead
+	signal RegDst, Branch, MemRead, MemtoReg, ALUSrc,
+	       RegWrite, Memwrite, jump : std_logic;
+	signal ALUOp : std_logic_vector(1 downto 0);
+	signal operation : std_logic_vector(3 downto 0);
+	signal zero : std_logic;
 
 	-- datapath wires
-	signal a, b, c, d, f, g, h, i, j, k, l, m, n, o, p, q : std_logic_vector(31 downto 0);
+	signal a, c, d, e, f, g, h, i, j, k, l, m, n, o, p,
+	       q : std_logic_vector(31 downto 0);
+	signal b : std_logic_vector(4 downto 0);
+	signal r : std_logic;
+	signal instruction : std_logic_vector(31 downto 0);
 
 begin
 
+	-- instruction fetech
+
+	mips32_pc : pc
+		port map (clk => clk, addr_in => p, addr_out => a);
+
+	mips32_imem : imemory
+		port map (address => a, data => instruction);
+
+	-- pc + 4
+	l <= std_logic_vector(to_signed(4, a'length) + signed(a));
+
+	-- instruction decode
+
+	mipd32_jum_calc : shift_left_2_jump
+		port map (imm => instruction(25 downto 0),
+		          pc_4msb => a(31 downto 28),
+		          jump_addr => q);
+
+	mips32_reg_dest_mux : mux
+		generic map (n => b'length)
+		port map (sel => RegDst,
+				  x => instruction(20 downto 16),
+				  y => instruction(15 downto 11),
+				  z => b);
+
+	mips32_regfile : regfile
+		port map (clk => clk,
+		          RegWrite => RegWrite,
+		          RR1 => instruction(25 downto 21),
+		          RR2 => instruction(20 downto 16),
+		          WR => b,
+		          WD => j,
+		          RD1 => c,
+		          RD2 => d);
+
+	mip32_sign_ext : sign_extend
+		port map (x => instruction(15 downto 0), y => e);
+
+	-- execute
+
+	mips32_alu_mux : mux32
+		port map (x => d, y => e, sel => ALUSrc,  z => f);
+
+	mips_alucntrl : alu_control
+		port map (ALUOp => ALUOp,
+		          Funct => instruction(5 downto 0),
+		          Operation => operation);
+
+	mips32_alu : alu32
+		port map (a => c, b => f, oper => operation,
+		          result => g, zero => zero, overf => overflow);
+
+	mips32_imm_shift : shift_left_2
+		port map (x => e, y => k);
+
+	-- branch address calculation 4*(signed extended imm) + (pc + 4)
+	m <= std_logic_vector(signed(l) + signed(k));
+
+	-- branch mux select
+	r <= zero and branch;
+
+	mips32_branch_mux : mux32
+		port map (x => l, y => m, sel => r, z => n);
+
+	mips32_jump_mux : mux32
+		port map (x => n, y => q, sel => jump, z => p);
+
+	-- memory
+
+	mips32_dmem : dmemory
+		port map (clk => clk,
+		          mem_read => MemRead, mem_write => Memwrite,
+		          address => g,
+		          write_data => d,
+		          read_data => h);
 
 end struc;
