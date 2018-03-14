@@ -30,6 +30,10 @@ begin
 				end if;
 			end if;
 
+		end if;
+
+		if falling_edge(clk) then
+
 			-- set the regfile ouputs
 			if to_integer(unsigned(RR1)) = 0 then
 				RD1 <= (others => '0');
@@ -44,6 +48,7 @@ begin
 			end if;
 
 		end if;
+
 	end process;
 end rtl;
 
