@@ -101,14 +101,13 @@ architecture struc of mips32_top is
 
 	--control wires
 	signal RegDst, Branch, MemRead, MemtoReg, ALUSrc,
-	       RegWrite, Memwrite, jump : std_logic;
+	       RegWrite, MemWrite, jump : std_logic;
 	signal ALUOp : std_logic_vector(1 downto 0);
 	signal operation : std_logic_vector(3 downto 0);
 	signal zero : std_logic;
 
 	-- datapath wires
-	signal a, c, d, e, f, g, h, i, j, k, l, m, n, o, p,
-	       q : std_logic_vector(31 downto 0);
+	signal a,c,d,e,f,g,h,j,k,l,m,n,p,q:std_logic_vector(31 downto 0);
 	signal b : std_logic_vector(4 downto 0);
 	signal r : std_logic;
 	signal instruction : std_logic_vector(31 downto 0);
@@ -127,6 +126,19 @@ begin
 	l <= std_logic_vector(to_signed(4, a'length) + signed(a));
 
 	-- instruction decode
+
+	mips32_controller : controller
+		port map (opcode => instruction(31 downto 26),
+		          RegDst => RegDst,
+		          MemRead => MemRead,
+		          MemWrite => MemWrite,
+		          MemtoReg => MemtoReg,
+		          ALUSrc => ALUSrc,
+		          RegWrite => RegWrite,
+		          Branch => Branch,
+		          jump => jump,
+		          ALUOp => ALUOp);
+
 
 	mipd32_jum_calc : shift_left_2_jump
 		port map (imm => instruction(25 downto 0),
@@ -186,9 +198,14 @@ begin
 
 	mips32_dmem : dmemory
 		port map (clk => clk,
-		          mem_read => MemRead, mem_write => Memwrite,
+		          mem_read => MemRead, mem_write => MemWrite,
 		          address => g,
 		          write_data => d,
 		          read_data => h);
+
+	-- write back
+
+	mips32_reg_write_data_mux : mux32
+		port map (x => g, y => h, sel => MemtoReg, z => j);
 
 end struc;
